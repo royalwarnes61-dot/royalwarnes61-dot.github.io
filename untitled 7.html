@@ -1,0 +1,3795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Vybe</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:#09090d;
+    color:white;
+}
+
+button{
+    font:inherit;
+    color:inherit;
+    border:0;
+    cursor:pointer;
+}
+
+button:active{
+    transform:scale(.94);
+}
+
+:root{
+    --accent:#ff2d70;
+    --accent2:#8b5cf6;
+    --bg:#09090d;
+    --panel:#12121a;
+    --panel2:#1a1a24;
+    --muted:#9999a8;
+    --line:rgba(255,255,255,.09);
+}
+
+/* APP */
+
+#app{
+    width:100%;
+    height:100%;
+    background:
+        radial-gradient(circle at 20% 10%,rgba(139,92,246,.14),transparent 35%),
+        radial-gradient(circle at 90% 70%,rgba(255,45,112,.08),transparent 35%),
+        var(--bg);
+    position:relative;
+    overflow:hidden;
+}
+
+/* TOP */
+
+.topbar{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 18px;
+    z-index:100;
+    background:rgba(8,8,13,.82);
+    backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--line);
+}
+
+.logo{
+    font-size:29px;
+    font-weight:900;
+    letter-spacing:-1.5px;
+}
+
+.logo span{
+    color:var(--accent);
+}
+
+.top-actions{
+    display:flex;
+    gap:10px;
+}
+
+.circle-btn{
+    width:43px;
+    height:43px;
+    border-radius:50%;
+    background:rgba(255,255,255,.08);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:21px;
+    border:1px solid rgba(255,255,255,.07);
+}
+
+/* MAIN */
+
+.main{
+    position:absolute;
+    top:70px;
+    left:0;
+    right:0;
+    bottom:78px;
+    overflow:hidden;
+}
+
+.screen{
+    width:100%;
+    height:100%;
+    display:none;
+}
+
+.screen.active{
+    display:flex;
+    flex-direction:column;
+}
+
+/* STORIES */
+
+.stories{
+    height:105px;
+    min-height:105px;
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:8px 15px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scrollbar-width:none;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(90deg,rgba(139,92,246,.08),rgba(255,45,112,.03));
+}
+
+.stories::-webkit-scrollbar{
+    display:none;
+}
+
+.story{
+    width:68px;
+    min-width:68px;
+    text-align:center;
+    color:#aaa;
+    font-size:11px;
+    overflow:hidden;
+}
+
+.story-ring{
+    width:62px;
+    height:62px;
+    border-radius:50%;
+    padding:3px;
+    margin:0 auto 4px;
+    background:linear-gradient(135deg,#ff2d55,#8b5cf6,#20d8ff);
+}
+
+.story-inner{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#16161e;
+    font-size:28px;
+    overflow:hidden;
+}
+
+.story.viewed{
+    opacity:.38;
+}
+
+.story-label{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+/* FEED */
+
+.feed{
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    scroll-snap-type:y mandatory;
+    scrollbar-width:none;
+    overscroll-behavior-y:contain;
+    -webkit-overflow-scrolling:touch;
+}
+
+.feed::-webkit-scrollbar{
+    display:none;
+}
+
+/* POST */
+
+.video-card{
+    position:relative;
+    width:100%;
+    height:100%;
+    min-height:100%;
+    overflow:hidden;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+    background:#101017;
+}
+
+.post-visual{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+}
+
+.post-visual svg{
+    width:100%;
+    height:100%;
+    display:block;
+}
+
+.visual-overlay{
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,.08),
+            transparent 35%,
+            rgba(0,0,0,.18) 55%,
+            rgba(0,0,0,.93) 100%
+        );
+}
+
+.video-info{
+    position:absolute;
+    left:16px;
+    right:82px;
+    bottom:18px;
+    z-index:10;
+    text-shadow:0 2px 8px rgba(0,0,0,.7);
+}
+
+.creator{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin-bottom:9px;
+}
+
+.pfp{
+    width:39px;
+    height:39px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#22222d;
+    border:2px solid rgba(255,255,255,.8);
+    overflow:hidden;
+    flex-shrink:0;
+    font-size:21px;
+}
+
+.creator-name{
+    font-weight:800;
+    font-size:15px;
+}
+
+.follow-small{
+    margin-left:4px;
+    padding:5px 10px;
+    border-radius:8px;
+    background:var(--accent);
+    font-size:11px;
+    font-weight:800;
+}
+
+.caption{
+    font-size:16px;
+    line-height:1.35;
+    font-weight:600;
+    margin-bottom:6px;
+}
+
+.post-meta{
+    font-size:12px;
+    color:#ddd;
+}
+
+/* SIDE ACTIONS */
+
+.side-actions{
+    position:absolute;
+    right:10px;
+    bottom:22px;
+    z-index:20;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+}
+
+.action{
+    background:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    font-size:12px;
+    min-width:48px;
+    text-shadow:0 2px 8px rgba(0,0,0,.8);
+}
+
+.action-icon{
+    width:49px;
+    height:49px;
+    border-radius:50%;
+    background:rgba(15,15,20,.65);
+    backdrop-filter:blur(10px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+    border:1px solid rgba(255,255,255,.1);
+}
+
+.action.liked .action-icon{
+    color:#ff2d55;
+}
+
+/* NAV */
+
+.nav{
+    position:absolute;
+    left:12px;
+    right:12px;
+    bottom:9px;
+    height:64px;
+    z-index:150;
+    border-radius:24px;
+    background:rgba(18,18,25,.9);
+    backdrop-filter:blur(22px);
+    border:1px solid rgba(255,255,255,.1);
+    display:flex;
+    align-items:center;
+    justify-content:space-around;
+    box-shadow:0 10px 40px rgba(0,0,0,.4);
+}
+
+.nav-btn{
+    background:none;
+    min-width:58px;
+    height:55px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:2px;
+    color:#92929f;
+    font-size:10px;
+}
+
+.nav-btn .icon{
+    font-size:23px;
+    line-height:22px;
+}
+
+.nav-btn.active{
+    color:white;
+}
+
+.nav-btn.create{
+    color:white;
+}
+
+.nav-btn.create .icon{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+}
+
+/* PAGES */
+
+.page{
+    width:100%;
+    height:100%;
+    overflow-y:auto;
+    padding:20px;
+    scrollbar-width:none;
+}
+
+.page::-webkit-scrollbar{
+    display:none;
+}
+
+.page-title{
+    font-size:27px;
+    font-weight:900;
+    margin-bottom:18px;
+}
+
+.card{
+    background:rgba(255,255,255,.055);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:16px;
+    margin-bottom:12px;
+}
+
+/* PROFILE */
+
+.profile-header{
+    text-align:center;
+    padding-top:15px;
+}
+
+.profile-pfp{
+    width:92px;
+    height:92px;
+    border-radius:50%;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:45px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border:4px solid rgba(255,255,255,.15);
+}
+
+.profile-name{
+    font-size:24px;
+    font-weight:900;
+    margin-top:10px;
+}
+
+.profile-handle{
+    color:var(--muted);
+}
+
+.stats{
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    margin:20px 0;
+}
+
+.stat{
+    text-align:center;
+}
+
+.stat-number{
+    font-weight:900;
+    font-size:19px;
+}
+
+.stat-label{
+    font-size:11px;
+    color:var(--muted);
+}
+
+.profile-buttons{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+}
+
+.primary{
+    padding:11px 22px;
+    border-radius:12px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    font-weight:800;
+}
+
+.secondary{
+    padding:11px 22px;
+    border-radius:12px;
+    background:rgba(255,255,255,.08);
+    font-weight:800;
+}
+
+/* GRID */
+
+.post-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:3px;
+    margin-top:20px;
+}
+
+.grid-post{
+    aspect-ratio:1;
+    overflow:hidden;
+    background:#17171f;
+    position:relative;
+}
+
+.grid-post svg{
+    width:100%;
+    height:100%;
+}
+
+/* SEARCH */
+
+.search-box{
+    width:100%;
+    background:#181820;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:13px 15px;
+    outline:none;
+    color:white;
+    margin-bottom:15px;
+}
+
+.search-results{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.user-result{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px;
+    background:rgba(255,255,255,.05);
+    border-radius:14px;
+    width:100%;
+}
+
+/* COMMENTS */
+
+.comment-sheet{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:72%;
+    z-index:500;
+    background:#121219;
+    border-radius:24px 24px 0 0;
+    display:none;
+    flex-direction:column;
+    box-shadow:0 -10px 50px rgba(0,0,0,.6);
+}
+
+.comment-sheet.open{
+    display:flex;
+}
+
+.sheet-header{
+    height:58px;
+    min-height:58px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-bottom:1px solid var(--line);
+    font-weight:800;
+    position:relative;
+}
+
+.comment-close{
+    position:absolute;
+    right:12px;
+    width:39px;
+    height:39px;
+    border-radius:50%;
+    background:rgba(255,255,255,.09);
+    font-size:25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.comments-list{
+    flex:1;
+    overflow-y:auto;
+    padding:12px;
+}
+
+.comment{
+    display:flex;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.comment-content{
+    flex:1;
+}
+
+.comment-user{
+    font-weight:800;
+    font-size:13px;
+}
+
+.comment-text{
+    font-size:13px;
+    color:#ddd;
+    margin-top:3px;
+}
+
+.comment-input{
+    display:flex;
+    gap:8px;
+    padding:10px;
+    border-top:1px solid var(--line);
+    background:#121219;
+}
+
+.comment-input input{
+    flex:1;
+    background:#1c1c25;
+    border:0;
+    outline:none;
+    color:white;
+    border-radius:12px;
+    padding:12px;
+}
+
+.comment-send{
+    width:45px;
+    border-radius:12px;
+    background:var(--accent);
+}
+
+/* CREATE */
+
+.create-area{
+    display:flex;
+    flex-direction:column;
+    gap:13px;
+}
+
+.create-input{
+    width:100%;
+    min-height:100px;
+    background:#17171f;
+    border:1px solid var(--line);
+    border-radius:15px;
+    padding:14px;
+    color:white;
+    outline:none;
+    resize:none;
+}
+
+.emoji-row{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:4px;
+}
+
+.emoji-choice{
+    width:48px;
+    height:48px;
+    min-width:48px;
+    border-radius:13px;
+    background:#1c1c25;
+    font-size:25px;
+}
+
+.emoji-choice.selected{
+    outline:2px solid var(--accent);
+}
+
+/* SETTINGS */
+
+.setting-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:15px 0;
+    border-bottom:1px solid var(--line);
+}
+
+.setting-left{
+    display:flex;
+    flex-direction:column;
+}
+
+.setting-name{
+    font-weight:700;
+}
+
+.setting-desc{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:3px;
+}
+
+.color-input{
+    width:45px;
+    height:45px;
+    border:0;
+    border-radius:50%;
+    background:none;
+}
+
+/* LEVEL */
+
+.level-card{
+    padding:17px;
+    border-radius:18px;
+    background:linear-gradient(135deg,rgba(255,45,112,.2),rgba(139,92,246,.18));
+    border:1px solid rgba(255,255,255,.08);
+    margin-bottom:15px;
+}
+
+.level-line{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:8px;
+    font-weight:800;
+}
+
+.xp-bar{
+    height:9px;
+    border-radius:99px;
+    background:#262631;
+    overflow:hidden;
+}
+
+.xp-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    border-radius:99px;
+    transition:.5s;
+}
+
+/* STORY VIEWER */
+
+.story-viewer{
+    position:absolute;
+    inset:0;
+    z-index:800;
+    background:#050509;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+.story-viewer.open{
+    display:flex;
+}
+
+.story-progress{
+    position:absolute;
+    top:11px;
+    left:12px;
+    right:12px;
+    height:3px;
+    border-radius:99px;
+    background:rgba(255,255,255,.25);
+    overflow:hidden;
+    z-index:10;
+}
+
+.story-progress-fill{
+    height:100%;
+    width:0%;
+    background:white;
+    animation:storyProgress 5s linear forwards;
+}
+
+@keyframes storyProgress{
+    from{width:0%}
+    to{width:100%}
+}
+
+.story-close{
+    position:absolute;
+    top:25px;
+    right:15px;
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:rgba(0,0,0,.45);
+    border:1px solid rgba(255,255,255,.15);
+    font-size:27px;
+    z-index:20;
+}
+
+.story-header{
+    position:absolute;
+    top:25px;
+    left:18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    z-index:20;
+}
+
+.story-header-pfp{
+    width:39px;
+    height:39px;
+    border-radius:50%;
+    background:#222;
+    border:2px solid white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+}
+
+.story-header-name{
+    font-weight:800;
+    text-shadow:0 2px 7px #000;
+}
+
+.story-visual{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:30px;
+    text-align:center;
+}
+
+.story-big-emoji{
+    font-size:120px;
+    margin-bottom:25px;
+    filter:drop-shadow(0 15px 30px rgba(0,0,0,.35));
+}
+
+.story-text{
+    font-size:27px;
+    font-weight:900;
+    max-width:340px;
+    text-shadow:0 3px 15px rgba(0,0,0,.6);
+}
+
+.story-subtext{
+    margin-top:12px;
+    color:rgba(255,255,255,.8);
+}
+
+/* TOAST */
+
+.toast-container{
+    position:absolute;
+    top:82px;
+    left:15px;
+    right:15px;
+    z-index:1000;
+    pointer-events:none;
+}
+
+.toast{
+    background:rgba(20,20,27,.94);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:14px;
+    padding:13px 15px;
+    margin-bottom:8px;
+    animation:toastIn .25s ease,toastOut .25s ease 2.4s forwards;
+    box-shadow:0 10px 35px rgba(0,0,0,.4);
+}
+
+@keyframes toastIn{
+    from{opacity:0;transform:translateY(-10px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes toastOut{
+    to{opacity:0;transform:translateY(-10px)}
+}
+
+/* MODAL */
+
+.modal{
+    position:absolute;
+    inset:0;
+    z-index:700;
+    background:rgba(0,0,0,.65);
+    backdrop-filter:blur(10px);
+    display:none;
+    align-items:flex-end;
+}
+
+.modal.open{
+    display:flex;
+}
+
+.modal-box{
+    width:100%;
+    background:#13131b;
+    border-radius:25px 25px 0 0;
+    padding:20px;
+    max-height:85%;
+    overflow-y:auto;
+}
+
+.modal-title{
+    font-size:22px;
+    font-weight:900;
+    margin-bottom:15px;
+}
+
+.close-btn{
+    position:absolute;
+    right:15px;
+    top:15px;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:#25252e;
+    z-index:5;
+}
+
+/* DESKTOP */
+
+@media(min-width:700px){
+    #app{
+        max-width:480px;
+        margin:auto;
+        border-left:1px solid #222;
+        border-right:1px solid #222;
+    }
+
+    body{
+        background:#020205;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<header class="topbar">
+
+    <div class="logo">
+        vybe<span>.</span>
+    </div>
+
+    <div class="top-actions">
+
+        <button class="circle-btn" onclick="openNotifications()">
+            ♡
+        </button>
+
+        <button class="circle-btn" onclick="openSettings()">
+            ⚙️
+        </button>
+
+    </div>
+
+</header>
+
+<main class="main">
+
+<section id="home" class="screen active">
+
+    <div id="stories" class="stories"></div>
+
+    <div id="feed" class="feed"></div>
+
+</section>
+
+<section id="search" class="screen">
+
+    <div class="page">
+
+        <div class="page-title">
+            Search
+        </div>
+
+        <input
+            id="searchInput"
+            class="search-box"
+            placeholder="Search people..."
+            oninput="searchUsers(this.value)">
+
+        <div id="searchResults" class="search-results"></div>
+
+    </div>
+
+</section>
+
+<section id="create" class="screen">
+
+    <div class="page">
+
+        <div class="page-title">
+            Create
+        </div>
+
+        <div class="card">
+
+            <div style="font-weight:800;margin-bottom:10px;">
+                Choose your visual
+            </div>
+
+            <div id="emojiRow" class="emoji-row"></div>
+
+        </div>
+
+        <div class="create-area">
+
+            <textarea
+                id="captionInput"
+                class="create-input"
+                placeholder="What's your vybe?"></textarea>
+
+            <button class="primary" onclick="publishPost()">
+                Post to Vybe
+            </button>
+
+            <button class="secondary" onclick="createStory()">
+                Add to Story
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section id="inbox" class="screen">
+
+    <div class="page">
+
+        <div class="page-title">
+            Inbox
+        </div>
+
+        <div id="notifications"></div>
+
+    </div>
+
+</section>
+
+<section id="profile" class="screen">
+
+    <div id="profilePage" class="page"></div>
+
+</section>
+
+</main>
+
+<nav class="nav">
+
+    <button class="nav-btn active" id="nav-home" onclick="navigate('home')">
+        <span class="icon">⌂</span>
+        <span>Home</span>
+    </button>
+
+    <button class="nav-btn" id="nav-search" onclick="navigate('search')">
+        <span class="icon">⌕</span>
+        <span>Search</span>
+    </button>
+
+    <button class="nav-btn create" id="nav-create" onclick="navigate('create')">
+        <span class="icon">+</span>
+        <span>Create</span>
+    </button>
+
+    <button class="nav-btn" id="nav-inbox" onclick="navigate('inbox')">
+        <span class="icon">♡</span>
+        <span>Inbox</span>
+    </button>
+
+    <button class="nav-btn" id="nav-profile" onclick="navigate('profile')">
+        <span class="icon">◎</span>
+        <span>Profile</span>
+    </button>
+
+</nav>
+
+
+<!-- COMMENTS -->
+
+<div id="commentSheet" class="comment-sheet">
+
+    <div class="sheet-header">
+
+        Comments
+
+        <button
+            class="comment-close"
+            onclick="closeComments()">
+            ×
+        </button>
+
+    </div>
+
+    <div id="commentsList" class="comments-list"></div>
+
+    <div class="comment-input">
+
+        <input
+            id="commentInput"
+            placeholder="Add a comment..."
+            maxlength="120">
+
+        <button class="comment-send" onclick="sendComment()">
+            ➤
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- STORY VIEWER -->
+
+<div id="storyViewer" class="story-viewer">
+
+    <div class="story-progress">
+        <div id="storyProgressFill" class="story-progress-fill"></div>
+    </div>
+
+    <div id="storyHeader" class="story-header"></div>
+
+    <button
+        class="story-close"
+        onclick="closeStoryViewer()">
+        ×
+    </button>
+
+    <div id="storyViewerContent" class="story-visual"></div>
+
+</div>
+
+
+<!-- SETTINGS -->
+
+<div id="settingsModal" class="modal">
+
+    <div class="modal-box">
+
+        <button class="close-btn" onclick="closeModal('settingsModal')">
+            ×
+        </button>
+
+        <div class="modal-title">
+            Settings
+        </div>
+
+        <div class="level-card">
+
+            <div class="level-line">
+
+                <span>
+                    Level <span id="settingsLevel">1</span>
+                </span>
+
+                <span id="settingsXP">
+                    0 XP
+                </span>
+
+            </div>
+
+            <div class="xp-bar">
+                <div id="settingsXPFill" class="xp-fill"></div>
+            </div>
+
+        </div>
+
+        <div class="setting-row">
+
+            <div class="setting-left">
+
+                <div class="setting-name">
+                    Background color
+                </div>
+
+                <div class="setting-desc">
+                    Change Vybe's background
+                </div>
+
+            </div>
+
+            <input
+                id="bgColor"
+                class="color-input"
+                type="color"
+                onchange="changeBackground(this.value)">
+
+        </div>
+
+        <div class="setting-row">
+
+            <div class="setting-left">
+
+                <div class="setting-name">
+                    Profile emoji
+                </div>
+
+                <div class="setting-desc">
+                    Choose your profile picture
+                </div>
+
+            </div>
+
+            <button class="secondary" onclick="changeProfileEmoji()">
+                Change
+            </button>
+
+        </div>
+
+        <div class="setting-row">
+
+            <div class="setting-left">
+
+                <div class="setting-name">
+                    Reset game
+                </div>
+
+                <div class="setting-desc">
+                    Delete all progress
+                </div>
+
+            </div>
+
+            <button class="secondary" onclick="resetGame()">
+                Reset
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- PROFILE MODAL -->
+
+<div id="userModal" class="modal">
+
+    <div class="modal-box">
+
+        <button class="close-btn" onclick="closeModal('userModal')">
+            ×
+        </button>
+
+        <div id="userModalContent"></div>
+
+    </div>
+
+</div>
+
+
+<div id="toastContainer" class="toast-container"></div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   DATA
+========================================================= */
+
+const emojis=[
+    "🔥","😂","😍","😎","🤯","😭","💀","🥶",
+    "🤩","😈","👀","❤️","💯","✨","🌎","🌙",
+    "🐶","🐱","🦊","🐸","🐼","🦄","🍕","🍔",
+    "🍓","🍩","🎮","🎧","🎸","⚽","🏀","🚀",
+    "💎","🌈","☀️","🌊","🌴","🧠","👑","🛸"
+];
+
+const firstNames=[
+    "alex","jordan","mason","olivia","mia",
+    "noah","liam","ava","ethan","sophia",
+    "lucas","emma","leo","amelia","jack",
+    "ella","henry","grace","ben","chloe",
+    "max","zoey","sam","lily","ryan",
+    "aria","kai","maya","logan","ruby",
+    "owen","ivy","caleb","nora","jake",
+    "layla","dylan","stella","cole","sadie",
+    "blake","piper","jude","hazel","finn",
+    "sky","ace","nova","river","sage"
+];
+
+const words=[
+    "this is actually crazy",
+    "wait for the ending",
+    "why is this so accurate",
+    "bro really did that",
+    "I wasn't ready",
+    "this made my day",
+    "nahhh 💀",
+    "the last part 😭",
+    "okay this is actually fire",
+    "how does this have so many views",
+    "I need to try this",
+    "literally me",
+    "why did I watch this 12 times",
+    "the algorithm knows me",
+    "this deserves more likes",
+    "no way",
+    "bro cooked",
+    "absolute cinema",
+    "I can't stop laughing",
+    "who else saw that",
+    "this is underrated",
+    "saving this",
+    "I need part 2",
+    "the comments are killing me",
+    "this randomly appeared on my feed",
+    "actually insane",
+    "I love this",
+    "too real",
+    "WHAT 😭",
+    "okay but why",
+    "this goes hard",
+    "I'm crying",
+    "best thing I've seen today",
+    "algorithm did its thing",
+    "wait WHAT",
+    "this is wild",
+    "bro thought we wouldn't notice",
+    "I'm invested now",
+    "10/10",
+    "peak content",
+    "we need more of this",
+    "that transition though",
+    "clean",
+    "smooth",
+    "I watched it again",
+    "this deserves to blow up",
+    "who made this",
+    "actually beautiful",
+    "I wasn't expecting that"
+];
+
+const postTemplates=[
+    {title:"POV",emoji:"😂"},
+    {title:"when you realize",emoji:"💀"},
+    {title:"this changed everything",emoji:"🤯"},
+    {title:"average day",emoji:"😭"},
+    {title:"no way this happened",emoji:"😳"},
+    {title:"the perfect vibe",emoji:"✨"},
+    {title:"tell me I'm wrong",emoji:"👀"},
+    {title:"weekend energy",emoji:"🔥"},
+    {title:"this is your sign",emoji:"💯"},
+    {title:"literally me",emoji:"😎"},
+    {title:"wait for it...",emoji:"🤯"},
+    {title:"night thoughts",emoji:"🌙"},
+    {title:"main character moment",emoji:"👑"},
+    {title:"this goes crazy",emoji:"🚀"}
+];
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let game=JSON.parse(localStorage.getItem("vybeGame")||"null");
+
+if(!game){
+
+    game={
+        username:"royal",
+        displayName:"royal",
+        pfp:"👑",
+        followers:0,
+        following:0,
+        likes:0,
+        xp:0,
+        level:1,
+        posts:[],
+        stories:[],
+        viewedStories:[],
+        likedPosts:[],
+        followingUsers:[],
+        notifications:[],
+        createdAt:Date.now(),
+        lastSeen:Date.now(),
+        background:"#09090d"
+    };
+
+}
+
+/* Compatibility with older saves */
+
+if(!game.viewedStories)
+    game.viewedStories=[];
+
+if(!game.stories)
+    game.stories=[];
+
+if(!game.posts)
+    game.posts=[];
+
+if(!game.likedPosts)
+    game.likedPosts=[];
+
+if(!game.followingUsers)
+    game.followingUsers=[];
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function save(){
+    game.lastSeen=Date.now();
+    localStorage.setItem("vybeGame",JSON.stringify(game));
+}
+
+function random(arr){
+    return arr[Math.floor(Math.random()*arr.length)];
+}
+
+function randomInt(min,max){
+    return Math.floor(Math.random()*(max-min+1))+min;
+}
+
+function formatNumber(number){
+
+    number=Number(number)||0;
+
+    if(number>=1000000000)
+        return (number/1000000000).toFixed(1)+"B";
+
+    if(number>=1000000)
+        return (number/1000000).toFixed(1)+"M";
+
+    if(number>=1000)
+        return (number/1000).toFixed(1)+"K";
+
+    return String(Math.floor(number));
+}
+
+function escapeHTML(str){
+
+    return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+function timeAgo(time){
+
+    const seconds=Math.floor((Date.now()-time)/1000);
+
+    if(seconds<60)return"just now";
+
+    const minutes=Math.floor(seconds/60);
+
+    if(minutes<60)return minutes+"m ago";
+
+    const hours=Math.floor(minutes/60);
+
+    if(hours<24)return hours+"h ago";
+
+    return Math.floor(hours/24)+"d ago";
+}
+
+
+/* =========================================================
+   PROFILES
+========================================================= */
+
+const profiles=[];
+
+for(let i=0;i<500;i++){
+
+    const base=firstNames[i%firstNames.length];
+
+    const name=base+(i>=firstNames.length?randomInt(1,999):"");
+
+    profiles.push({
+
+        username:name,
+
+        displayName:
+            name.charAt(0).toUpperCase()+name.slice(1),
+
+        pfp:random(emojis),
+
+        followers:
+            Math.floor(Math.pow(Math.random(),2)*500000),
+
+        likes:
+            Math.floor(Math.pow(Math.random(),2)*2000000)
+
+    });
+
+}
+
+
+/* =========================================================
+   SVG VISUALS
+========================================================= */
+
+function createSVG(post){
+
+    const palettes=[
+        ["#ff2d55","#8b5cf6"],
+        ["#06b6d4","#3b82f6"],
+        ["#f97316","#ef4444"],
+        ["#22c55e","#14b8a6"],
+        ["#e879f9","#8b5cf6"],
+        ["#facc15","#fb7185"],
+        ["#38bdf8","#6366f1"],
+        ["#ec4899","#f43f5e"]
+    ];
+
+    const palette=palettes[Math.abs(post.id)%palettes.length];
+
+    const a=palette[0];
+    const b=palette[1];
+
+    const angle=(Math.abs(post.id)*37)%360;
+
+    return `
+
+    <svg
+        viewBox="0 0 400 700"
+        preserveAspectRatio="xMidYMid slice"
+        xmlns="http://www.w3.org/2000/svg">
+
+        <defs>
+
+            <linearGradient
+                id="g${post.id}"
+                x1="0"
+                y1="0"
+                x2="1"
+                y2="1">
+
+                <stop offset="0%" stop-color="${a}"/>
+                <stop offset="100%" stop-color="${b}"/>
+
+            </linearGradient>
+
+            <filter id="blur${post.id}">
+                <feGaussianBlur stdDeviation="45"/>
+            </filter>
+
+        </defs>
+
+        <rect
+            width="400"
+            height="700"
+            fill="url(#g${post.id})"/>
+
+        <circle
+            cx="${70+(Math.abs(post.id)%250)}"
+            cy="${100+(Math.abs(post.id)%300)}"
+            r="150"
+            fill="rgba(255,255,255,.12)"
+            filter="url(#blur${post.id})"/>
+
+        <circle
+            cx="${320-(Math.abs(post.id)%180)}"
+            cy="${500-(Math.abs(post.id)%250)}"
+            r="180"
+            fill="rgba(0,0,0,.16)"
+            filter="url(#blur${post.id})"/>
+
+        <g
+            transform="rotate(${angle} 200 350)"
+            opacity=".12">
+
+            <rect x="-100" y="130" width="600" height="20" fill="white"/>
+            <rect x="-100" y="330" width="600" height="20" fill="white"/>
+            <rect x="-100" y="530" width="600" height="20" fill="white"/>
+
+        </g>
+
+        <text
+            x="200"
+            y="325"
+            text-anchor="middle"
+            font-size="95">
+
+            ${escapeHTML(post.emoji)}
+
+        </text>
+
+        <text
+            x="200"
+            y="430"
+            text-anchor="middle"
+            fill="white"
+            font-size="25"
+            font-weight="900"
+            font-family="Arial">
+
+            ${escapeHTML(post.title)}
+
+        </text>
+
+        <text
+            x="200"
+            y="465"
+            text-anchor="middle"
+            fill="rgba(255,255,255,.85)"
+            font-size="13"
+            font-family="Arial">
+
+            ${escapeHTML(post.subtitle)}
+
+        </text>
+
+    </svg>
+
+    `;
+}
+
+
+/* =========================================================
+   GENERATED POSTS
+========================================================= */
+
+const generatedPosts=[];
+
+for(let i=0;i<1200;i++){
+
+    const creator=profiles[i%profiles.length];
+
+    const template=postTemplates[i%postTemplates.length];
+
+    generatedPosts.push({
+
+        id:i,
+
+        username:creator.username,
+
+        displayName:creator.displayName,
+
+        pfp:creator.pfp,
+
+        followers:creator.followers,
+
+        likes:randomInt(50,900000),
+
+        comments:randomInt(1,1500),
+
+        emoji:template.emoji,
+
+        title:template.title,
+
+        subtitle:random(words),
+
+        caption:random(words),
+
+        created:Date.now()-(i*3600000)
+
+    });
+
+}
+
+let allPosts=[...generatedPosts,...game.posts];
+
+
+/* =========================================================
+   STORIES
+========================================================= */
+
+function renderStories(){
+
+    const stories=document.getElementById("stories");
+
+    stories.innerHTML="";
+
+    /* YOUR STORY */
+
+    stories.innerHTML+=`
+
+        <div
+            class="story"
+            onclick="openOwnStory()">
+
+            <div class="story-ring">
+
+                <div class="story-inner">
+                    +
+                </div>
+
+            </div>
+
+            <div class="story-label">
+                Your Story
+            </div>
+
+        </div>
+
+    `;
+
+    /* OTHER STORIES */
+
+    profiles.slice(0,50).forEach(user=>{
+
+        /*
+           IMPORTANT:
+           If the story has already been viewed,
+           completely remove it from the row.
+        */
+
+        if(game.viewedStories.includes(user.username))
+            return;
+
+        stories.innerHTML+=`
+
+            <div
+                class="story"
+                onclick="viewStory('${user.username}')">
+
+                <div class="story-ring">
+
+                    <div class="story-inner">
+                        ${user.pfp}
+                    </div>
+
+                </div>
+
+                <div class="story-label">
+                    ${escapeHTML(user.displayName)}
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+}
+
+
+/* =========================================================
+   STORY VIEWER
+========================================================= */
+
+let activeStoryUser=null;
+let storyTimer=null;
+
+function viewStory(username){
+
+    const user=profiles.find(
+        u=>u.username===username
+    );
+
+    if(!user)return;
+
+    activeStoryUser=username;
+
+    /*
+       Mark as viewed IMMEDIATELY.
+       This means even if the user closes the
+       story manually, it won't stay in the row.
+    */
+
+    if(!game.viewedStories.includes(username)){
+
+        game.viewedStories.push(username);
+
+    }
+
+    save();
+
+    renderStories();
+
+    const viewer=document.getElementById("storyViewer");
+
+    const header=document.getElementById("storyHeader");
+
+    const content=document.getElementById("storyViewerContent");
+
+    const progress=document.getElementById("storyProgressFill");
+
+    const storyIndex=
+        Math.abs(
+            username
+                .split("")
+                .reduce(
+                    (a,c)=>a+c.charCodeAt(0),
+                    0
+                )
+        );
+
+    const palette=[
+        ["#ff2d55","#8b5cf6"],
+        ["#06b6d4","#3b82f6"],
+        ["#f97316","#ef4444"],
+        ["#22c55e","#14b8a6"],
+        ["#e879f9","#8b5cf6"],
+        ["#facc15","#fb7185"]
+    ][storyIndex%6];
+
+    header.innerHTML=`
+
+        <div class="story-header-pfp">
+            ${user.pfp}
+        </div>
+
+        <div class="story-header-name">
+            @${escapeHTML(user.username)}
+        </div>
+
+    `;
+
+    const storyEmoji=emojis[storyIndex%emojis.length];
+
+    const storyText=[
+        "just vibing ✨",
+        "today's mood",
+        "you had to be here",
+        "another day on Vybe",
+        "main character energy",
+        "this is your sign",
+        "good vibes only",
+        "life lately",
+        "random thought",
+        "no context needed"
+    ][storyIndex%10];
+
+    content.style.background=
+        `linear-gradient(135deg,${palette[0]},${palette[1]})`;
+
+    content.innerHTML=`
+
+        <div class="story-big-emoji">
+            ${storyEmoji}
+        </div>
+
+        <div class="story-text">
+            ${storyText}
+        </div>
+
+        <div class="story-subtext">
+            ${escapeHTML(user.displayName)}
+            • ${formatNumber(user.followers)} followers
+        </div>
+
+    `;
+
+    viewer.classList.add("open");
+
+    /*
+       Restart progress animation every time.
+    */
+
+    progress.style.animation="none";
+
+    void progress.offsetWidth;
+
+    progress.style.animation=
+        "storyProgress 5s linear forwards";
+
+    clearTimeout(storyTimer);
+
+    storyTimer=setTimeout(
+        closeStoryViewer,
+        5000
+    );
+
+}
+
+function openOwnStory(){
+
+    if(!game.stories.length){
+
+        navigate("create");
+
+        toast("Create your first story!");
+
+        return;
+
+    }
+
+    const latest=
+        game.stories[
+            game.stories.length-1
+        ];
+
+    const viewer=document.getElementById("storyViewer");
+
+    const header=document.getElementById("storyHeader");
+
+    const content=document.getElementById("storyViewerContent");
+
+    const progress=document.getElementById("storyProgressFill");
+
+    header.innerHTML=`
+
+        <div class="story-header-pfp">
+            ${game.pfp}
+        </div>
+
+        <div class="story-header-name">
+            @royal
+        </div>
+
+    `;
+
+    content.style.background=
+        "linear-gradient(135deg,#ff2d70,#8b5cf6)";
+
+    content.innerHTML=`
+
+        <div class="story-big-emoji">
+            ${latest.emoji}
+        </div>
+
+        <div class="story-text">
+            ${escapeHTML(latest.text||"my story")}
+        </div>
+
+        <div class="story-subtext">
+            Your Story
+        </div>
+
+    `;
+
+    viewer.classList.add("open");
+
+    progress.style.animation="none";
+
+    void progress.offsetWidth;
+
+    progress.style.animation=
+        "storyProgress 5s linear forwards";
+
+    clearTimeout(storyTimer);
+
+    storyTimer=setTimeout(
+        closeStoryViewer,
+        5000
+    );
+
+}
+
+function closeStoryViewer(){
+
+    const viewer=document.getElementById("storyViewer");
+
+    viewer.classList.remove("open");
+
+    clearTimeout(storyTimer);
+
+    storyTimer=null;
+
+    activeStoryUser=null;
+
+    renderStories();
+
+}
+
+
+/* =========================================================
+   TAP STORY TO CLOSE
+========================================================= */
+
+document
+    .getElementById("storyViewer")
+    .addEventListener("click",e=>{
+
+        if(
+            e.target.id==="storyViewer"
+            ||
+            e.target.classList.contains("story-visual")
+        ){
+
+            closeStoryViewer();
+
+        }
+
+    });
+
+
+/* =========================================================
+   FEED
+========================================================= */
+
+function renderFeed(){
+
+    const feed=document.getElementById("feed");
+
+    feed.innerHTML="";
+
+    const shuffled=[...allPosts];
+
+    for(let i=0;i<shuffled.length;i++){
+
+        const j=(i*73)%shuffled.length;
+
+        [
+            shuffled[i],
+            shuffled[j]
+        ]=[
+            shuffled[j],
+            shuffled[i]
+        ];
+
+    }
+
+    shuffled
+        .slice(0,120)
+        .forEach(post=>{
+            feed.appendChild(
+                createPostElement(post)
+            );
+        });
+
+}
+
+
+/* =========================================================
+   POST ELEMENT
+========================================================= */
+
+function createPostElement(post){
+
+    const card=document.createElement("article");
+
+    card.className="video-card";
+
+    const liked=
+        game.likedPosts.includes(post.id);
+
+    const following=
+        game.followingUsers.includes(post.username);
+
+    const commentCount=
+        calculateComments(post);
+
+    card.innerHTML=`
+
+        <div class="post-visual">
+            ${createSVG(post)}
+        </div>
+
+        <div class="visual-overlay"></div>
+
+        <div class="video-info">
+
+            <div
+                class="creator"
+                onclick="
+                    event.stopPropagation();
+                    viewUser('${post.username}')
+                ">
+
+                <div class="pfp">
+                    ${post.pfp}
+                </div>
+
+                <div class="creator-name">
+                    @${escapeHTML(post.username)}
+                </div>
+
+                ${
+                    post.username!==game.username
+                    ?
+                    `
+                    <button
+                        class="follow-small"
+                        onclick="
+                            event.stopPropagation();
+                            toggleFollow('${post.username}')
+                        ">
+
+                        ${following?"Following":"Follow"}
+
+                    </button>
+                    `
+                    :""
+                }
+
+            </div>
+
+            <div class="caption">
+                ${escapeHTML(post.caption)}
+            </div>
+
+            <div class="post-meta">
+                🎵 original vybe •
+                ${formatNumber(post.likes)} likes
+            </div>
+
+        </div>
+
+        <div class="side-actions">
+
+            <button
+                class="action ${liked?"liked":""}"
+                onclick="toggleLike(${post.id})">
+
+                <div class="action-icon">
+                    ${liked?"♥":"♡"}
+                </div>
+
+                <span>
+                    ${formatNumber(
+                        post.likes+(liked?1:0)
+                    )}
+                </span>
+
+            </button>
+
+            <button
+                class="action"
+                onclick="openComments(${post.id})">
+
+                <div class="action-icon">
+                    💬
+                </div>
+
+                <span>
+                    ${formatNumber(commentCount)}
+                </span>
+
+            </button>
+
+            <button
+                class="action"
+                onclick="sharePost(${post.id})">
+
+                <div class="action-icon">
+                    ↗
+                </div>
+
+                <span>
+                    Share
+                </span>
+
+            </button>
+
+            <button
+                class="action"
+                onclick="savePost(${post.id})">
+
+                <div class="action-icon">
+                    🔖
+                </div>
+
+                <span>
+                    Save
+                </span>
+
+            </button>
+
+        </div>
+
+    `;
+
+    return card;
+
+}
+
+
+/* =========================================================
+   COMMENTS
+========================================================= */
+
+function calculateComments(post){
+
+    const followers=post.followers||0;
+
+    const base=
+        Math.sqrt(
+            Math.max(1,followers)
+        );
+
+    const ratio=
+        post.comments/
+        Math.max(
+            10,
+            Math.sqrt(
+                Math.max(1,post.followers)
+            )
+        );
+
+    /*
+       More realistic variation:
+       tiny accounts can have almost no comments,
+       larger accounts can have hundreds/thousands.
+    */
+
+    const result=Math.floor(
+        base*ratio*.12
+    );
+
+    return Math.max(
+        0,
+        result
+    );
+
+}
+
+let activeCommentPost=null;
+
+function openComments(id){
+
+    activeCommentPost=id;
+
+    const post=
+        allPosts.find(
+            p=>p.id===id
+        );
+
+    if(!post)return;
+
+    const sheet=
+        document.getElementById(
+            "commentSheet"
+        );
+
+    const list=
+        document.getElementById(
+            "commentsList"
+        );
+
+    list.innerHTML="";
+
+    const count=
+        Math.min(
+            50,
+            Math.max(
+                1,
+                calculateComments(post)
+            )
+        );
+
+    for(let i=0;i<count;i++){
+
+        const user=
+            profiles[
+                (Math.abs(id)+i)%
+                profiles.length
+            ];
+
+        const text=
+            words[
+                (Math.abs(id)*3+i)%
+                words.length
+            ];
+
+        list.innerHTML+=`
+
+            <div class="comment">
+
+                <div class="pfp">
+                    ${user.pfp}
+                </div>
+
+                <div class="comment-content">
+
+                    <div class="comment-user">
+                        @${escapeHTML(user.username)}
+                    </div>
+
+                    <div class="comment-text">
+                        ${escapeHTML(text)}
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+    sheet.classList.add("open");
+
+    setTimeout(()=>{
+
+        document
+            .getElementById("commentInput")
+            .focus();
+
+    },150);
+
+}
+
+function closeComments(){
+
+    const sheet=
+        document.getElementById(
+            "commentSheet"
+        );
+
+    sheet.classList.remove("open");
+
+    activeCommentPost=null;
+
+    const input=
+        document.getElementById(
+            "commentInput"
+        );
+
+    if(input)
+        input.value="";
+
+}
+
+
+/* Tap dark area outside comments */
+
+document.addEventListener("click",e=>{
+
+    const sheet=
+        document.getElementById(
+            "commentSheet"
+        );
+
+    if(
+        sheet.classList.contains("open")
+        &&
+        e.target===sheet
+    ){
+
+        closeComments();
+
+    }
+
+});
+
+
+function sendComment(){
+
+    const input=
+        document.getElementById(
+            "commentInput"
+        );
+
+    const text=input.value.trim();
+
+    if(!text)return;
+
+    const list=
+        document.getElementById(
+            "commentsList"
+        );
+
+    list.insertAdjacentHTML(
+        "afterbegin",
+        `
+
+        <div class="comment">
+
+            <div class="pfp">
+                ${game.pfp}
+            </div>
+
+            <div class="comment-content">
+
+                <div class="comment-user">
+                    @${game.username}
+                </div>
+
+                <div class="comment-text">
+                    ${escapeHTML(text)}
+                </div>
+
+            </div>
+
+        </div>
+
+        `
+    );
+
+    input.value="";
+
+    addXP(5);
+
+    playSound("comment");
+
+    toast("+5 XP • Comment posted");
+
+    save();
+
+}
+
+
+/* Enter to comment */
+
+document
+    .getElementById("commentInput")
+    .addEventListener("keydown",e=>{
+
+        if(e.key==="Enter"){
+
+            e.preventDefault();
+
+            sendComment();
+
+        }
+
+    });
+
+
+/* =========================================================
+   LIKES
+========================================================= */
+
+function toggleLike(id){
+
+    const post=
+        allPosts.find(
+            p=>p.id===id
+        );
+
+    if(!post)return;
+
+    const index=
+        game.likedPosts.indexOf(id);
+
+    if(index===-1){
+
+        game.likedPosts.push(id);
+
+        post.likes++;
+
+        game.likes++;
+
+        addXP(3);
+
+        playSound("like");
+
+    }else{
+
+        game.likedPosts.splice(index,1);
+
+        post.likes=Math.max(
+            0,
+            post.likes-1
+        );
+
+        game.likes=Math.max(
+            0,
+            game.likes-1
+        );
+
+    }
+
+    save();
+
+    renderFeed();
+
+}
+
+
+/* =========================================================
+   FOLLOW
+========================================================= */
+
+function toggleFollow(username){
+
+    const index=
+        game.followingUsers.indexOf(username);
+
+    if(index===-1){
+
+        game.followingUsers.push(username);
+
+        game.following=
+            game.followingUsers.length;
+
+        addXP(10);
+
+        toast(
+            "You're now following @"+username
+        );
+
+        playSound("follow");
+
+    }else{
+
+        game.followingUsers.splice(index,1);
+
+        game.following=
+            game.followingUsers.length;
+
+        toast(
+            "Unfollowed @"+username
+        );
+
+    }
+
+    save();
+
+    renderFeed();
+
+}
+
+
+/* =========================================================
+   SHARE / SAVE
+========================================================= */
+
+function sharePost(id){
+
+    if(navigator.clipboard){
+
+        navigator.clipboard.writeText(
+            "Check this out on Vybe!"
+        ).catch(()=>{});
+
+    }
+
+    addXP(5);
+
+    toast("Post shared! +5 XP");
+
+}
+
+const savedPosts=new Set();
+
+function savePost(id){
+
+    if(savedPosts.has(id)){
+
+        savedPosts.delete(id);
+
+        toast("Removed from saved");
+
+    }else{
+
+        savedPosts.add(id);
+
+        addXP(2);
+
+        toast("Saved! +2 XP");
+
+    }
+
+}
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+function renderProfile(){
+
+    const page=
+        document.getElementById(
+            "profilePage"
+        );
+
+    const myPosts=
+        allPosts.filter(
+            p=>p.username===game.username
+        );
+
+    page.innerHTML=`
+
+        <div class="profile-header">
+
+            <div class="profile-pfp">
+                ${game.pfp}
+            </div>
+
+            <div class="profile-name">
+                ${escapeHTML(game.displayName)}
+            </div>
+
+            <div class="profile-handle">
+                @${escapeHTML(game.username)}
+            </div>
+
+            <div class="stats">
+
+                <div class="stat">
+
+                    <div class="stat-number">
+                        ${formatNumber(game.followers)}
+                    </div>
+
+                    <div class="stat-label">
+                        Followers
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div class="stat-number">
+                        ${formatNumber(game.following)}
+                    </div>
+
+                    <div class="stat-label">
+                        Following
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div class="stat-number">
+                        ${formatNumber(game.likes)}
+                    </div>
+
+                    <div class="stat-label">
+                        Likes
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="level-card">
+
+                <div class="level-line">
+
+                    <span>
+                        LVL ${game.level}
+                    </span>
+
+                    <span>
+                        ${game.xp} XP
+                    </span>
+
+                </div>
+
+                <div class="xp-bar">
+
+                    <div
+                        class="xp-fill"
+                        style="width:${xpPercent()}%">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="profile-buttons">
+
+                <button
+                    class="secondary"
+                    onclick="openSettings()">
+
+                    Edit Profile
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <div
+            class="post-grid"
+            id="myPostGrid">
+        </div>
+
+    `;
+
+    const grid=
+        document.getElementById(
+            "myPostGrid"
+        );
+
+    if(!myPosts.length){
+
+        grid.innerHTML=`
+
+            <div
+                style="
+                    grid-column:1/-1;
+                    text-align:center;
+                    padding:50px 20px;
+                    color:#888;
+                ">
+
+                You haven't posted anything yet.<br><br>
+
+                Tap + to make your first post.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    myPosts.forEach(post=>{
+
+        grid.innerHTML+=`
+
+            <div
+                class="grid-post"
+                onclick="viewPost(${post.id})">
+
+                ${createSVG(post)}
+
+            </div>
+
+        `;
+
+    });
+
+}
+
+
+/* =========================================================
+   OTHER PROFILE
+========================================================= */
+
+function viewUser(username){
+
+    if(username===game.username){
+
+        navigate("profile");
+
+        return;
+
+    }
+
+    const user=
+        profiles.find(
+            p=>p.username===username
+        );
+
+    if(!user)return;
+
+    const posts=
+        allPosts.filter(
+            p=>p.username===username
+        ).slice(0,30);
+
+    const following=
+        game.followingUsers.includes(username);
+
+    const content=
+        document.getElementById(
+            "userModalContent"
+        );
+
+    content.innerHTML=`
+
+        <div class="profile-header">
+
+            <div class="profile-pfp">
+                ${user.pfp}
+            </div>
+
+            <div class="profile-name">
+                ${escapeHTML(user.displayName)}
+            </div>
+
+            <div class="profile-handle">
+                @${escapeHTML(user.username)}
+            </div>
+
+            <div class="stats">
+
+                <div class="stat">
+
+                    <div class="stat-number">
+                        ${formatNumber(user.followers)}
+                    </div>
+
+                    <div class="stat-label">
+                        Followers
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div class="stat-number">
+                        ${formatNumber(randomInt(20,300))}
+                    </div>
+
+                    <div class="stat-label">
+                        Following
+                    </div>
+
+                </div>
+
+                <div class="stat">
+
+                    <div class="stat-number">
+                        ${formatNumber(user.likes)}
+                    </div>
+
+                    <div class="stat-label">
+                        Likes
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button
+                class="${following?"secondary":"primary"}"
+                onclick="
+                    toggleFollow('${user.username}');
+                    viewUser('${user.username}');
+                ">
+
+                ${following?"Following":"Follow"}
+
+            </button>
+
+        </div>
+
+        <div class="post-grid">
+
+            ${
+                posts.length
+                ?
+                posts.map(
+                    p=>`
+
+                    <div
+                        class="grid-post"
+                        onclick="viewPost(${p.id})">
+
+                        ${createSVG(p)}
+
+                    </div>
+
+                    `
+                ).join("")
+                :
+                `
+                <div
+                    style="
+                        grid-column:1/-1;
+                        text-align:center;
+                        color:#888;
+                        padding:40px;
+                    ">
+
+                    No posts yet.
+
+                </div>
+                `
+            }
+
+        </div>
+
+    `;
+
+    document
+        .getElementById("userModal")
+        .classList.add("open");
+
+}
+
+
+/* =========================================================
+   VIEW POST
+========================================================= */
+
+function viewPost(id){
+
+    closeModal("userModal");
+
+    navigate("home");
+
+    setTimeout(()=>{
+
+        const post=
+            allPosts.find(
+                p=>p.id===id
+            );
+
+        if(!post)return;
+
+        const cards=
+            [...document.querySelectorAll(".video-card")];
+
+        const card=
+            cards.find(
+                c=>c.innerHTML.includes(
+                    `@${escapeHTML(post.username)}`
+                )
+            );
+
+        if(card){
+
+            card.scrollIntoView({
+                behavior:"smooth"
+            });
+
+        }
+
+    },100);
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function searchUsers(query){
+
+    const results=
+        document.getElementById(
+            "searchResults"
+        );
+
+    query=query.toLowerCase().trim();
+
+    if(!query){
+
+        results.innerHTML=`
+
+            <div
+                style="
+                    color:#888;
+                    text-align:center;
+                    padding:30px;
+                ">
+
+                Search for a creator.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    const matches=
+        profiles
+            .filter(
+                u=>
+                    u.username.toLowerCase().includes(query)
+                    ||
+                    u.displayName.toLowerCase().includes(query)
+            )
+            .slice(0,30);
+
+    results.innerHTML=
+        matches.map(
+            user=>`
+
+            <button
+                class="user-result"
+                onclick="viewUser('${user.username}')">
+
+                <div class="pfp">
+                    ${user.pfp}
+                </div>
+
+                <div style="text-align:left;flex:1">
+
+                    <div style="font-weight:800">
+                        ${escapeHTML(user.displayName)}
+                    </div>
+
+                    <div style="color:#888;font-size:12px">
+
+                        @${escapeHTML(user.username)}
+                        •
+                        ${formatNumber(user.followers)}
+                        followers
+
+                    </div>
+
+                </div>
+
+            </button>
+
+            `
+        ).join("");
+
+}
+
+
+/* =========================================================
+   CREATE
+========================================================= */
+
+let selectedEmoji="🔥";
+
+function renderEmojiChoices(){
+
+    const row=
+        document.getElementById(
+            "emojiRow"
+        );
+
+    row.innerHTML="";
+
+    emojis.slice(0,24).forEach(emoji=>{
+
+        const btn=
+            document.createElement("button");
+
+        btn.className=
+            "emoji-choice"+
+            (emoji===selectedEmoji?" selected":"");
+
+        btn.textContent=emoji;
+
+        btn.onclick=()=>{
+
+            selectedEmoji=emoji;
+
+            renderEmojiChoices();
+
+        };
+
+        row.appendChild(btn);
+
+    });
+
+}
+
+
+/* =========================================================
+   POST
+========================================================= */
+
+function publishPost(){
+
+    const input=
+        document.getElementById(
+            "captionInput"
+        );
+
+    const caption=
+        input.value.trim()||
+        random(words);
+
+    const post={
+
+        id:Date.now(),
+
+        username:game.username,
+
+        displayName:game.displayName,
+
+        pfp:game.pfp,
+
+        followers:game.followers,
+
+        likes:0,
+
+        comments:0,
+
+        emoji:selectedEmoji,
+
+        title:"new vybe",
+
+        subtitle:"posted by royal",
+
+        caption:caption,
+
+        created:Date.now()
+
+    };
+
+    game.posts.unshift(post);
+
+    allPosts.unshift(post);
+
+    game.followers+=randomInt(1,4);
+
+    addXP(30);
+
+    input.value="";
+
+    save();
+
+    toast("Posted! +30 XP");
+
+    playSound("post");
+
+    renderStories();
+
+    renderFeed();
+
+    navigate("home");
+
+}
+
+
+/* =========================================================
+   STORY CREATION
+========================================================= */
+
+function createStory(){
+
+    const input=
+        document.getElementById(
+            "captionInput"
+        );
+
+    const text=
+        input
+        ?
+        input.value.trim()||random(words)
+        :
+        random(words);
+
+    game.stories.push({
+
+        emoji:selectedEmoji,
+
+        text:text,
+
+        created:Date.now()
+
+    });
+
+    addXP(15);
+
+    save();
+
+    toast("Story added! +15 XP");
+
+    playSound("post");
+
+    renderStories();
+
+}
+
+
+/* =========================================================
+   XP
+========================================================= */
+
+function xpNeeded(){
+
+    /*
+       Easier leveling than the old version.
+    */
+
+    return 35+(game.level-1)*25;
+
+}
+
+function xpPercent(){
+
+    return Math.min(
+        100,
+        game.xp/xpNeeded()*100
+    );
+
+}
+
+function addXP(amount){
+
+    game.xp+=amount;
+
+    while(game.xp>=xpNeeded()){
+
+        game.xp-=xpNeeded();
+
+        game.level++;
+
+        game.followers+=game.level*3;
+
+        game.notifications.unshift({
+
+            text:
+                "🎉 You reached Level "+
+                game.level+"!",
+
+            time:Date.now()
+
+        });
+
+        toast(
+            "🎉 LEVEL UP! Level "+
+            game.level
+        );
+
+        playSound("level");
+
+    }
+
+    save();
+
+}
+
+
+/* =========================================================
+   OFFLINE
+========================================================= */
+
+function calculateOffline(){
+
+    const now=Date.now();
+
+    const elapsed=
+        now-(game.lastSeen||now);
+
+    const minutes=
+        Math.floor(elapsed/60000);
+
+    if(minutes<1)return;
+
+    const followerRate=
+        Math.max(.15,game.level*.15);
+
+    const gainedFollowers=
+        Math.floor(minutes*followerRate);
+
+    const gainedLikes=
+        Math.floor(
+            gainedFollowers*
+            Math.max(1,game.level*.7)
+        );
+
+    if(
+        gainedFollowers>0||
+        gainedLikes>0
+    ){
+
+        game.followers+=gainedFollowers;
+
+        game.likes+=gainedLikes;
+
+        game.xp+=Math.min(
+            100,
+            Math.floor(minutes*.5)
+        );
+
+        game.notifications.unshift({
+
+            text:
+                "While you were away: +"+
+                formatNumber(gainedFollowers)+
+                " followers, +"+
+                formatNumber(gainedLikes)+
+                " likes",
+
+            time:Date.now()
+
+        });
+
+        setTimeout(()=>{
+
+            toast(
+                "Welcome back! +"+
+                formatNumber(gainedFollowers)+
+                " followers"
+            );
+
+        },500);
+
+    }
+
+    save();
+
+}
+
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+function openNotifications(){
+    navigate("inbox");
+}
+
+function renderNotifications(){
+
+    const container=
+        document.getElementById(
+            "notifications"
+        );
+
+    if(!game.notifications.length){
+
+        container.innerHTML=`
+
+            <div
+                style="
+                    text-align:center;
+                    color:#888;
+                    padding:50px 10px;
+                ">
+
+                No notifications yet.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    container.innerHTML=
+        game.notifications
+            .slice(0,50)
+            .map(
+                n=>`
+
+                <div class="card">
+
+                    ${escapeHTML(n.text)}
+
+                    <div
+                        style="
+                            color:#777;
+                            font-size:11px;
+                            margin-top:5px;
+                        ">
+
+                        ${timeAgo(n.time)}
+
+                    </div>
+
+                </div>
+
+                `
+            ).join("");
+
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+function openSettings(){
+
+    document
+        .getElementById("settingsModal")
+        .classList.add("open");
+
+    updateSettings();
+
+}
+
+function closeModal(id){
+
+    document
+        .getElementById(id)
+        .classList.remove("open");
+
+}
+
+function updateSettings(){
+
+    document.getElementById(
+        "settingsLevel"
+    ).textContent=game.level;
+
+    document.getElementById(
+        "settingsXP"
+    ).textContent=game.xp+" XP";
+
+    document.getElementById(
+        "settingsXPFill"
+    ).style.width=xpPercent()+"%";
+
+    document.getElementById(
+        "bgColor"
+    ).value=game.background;
+
+}
+
+function changeBackground(color){
+
+    game.background=color;
+
+    document.documentElement.style.setProperty(
+        "--bg",
+        color
+    );
+
+    save();
+
+}
+
+function changeProfileEmoji(){
+
+    const index=emojis.indexOf(game.pfp);
+
+    game.pfp=
+        emojis[
+            (index+1+emojis.length)%emojis.length
+        ];
+
+    save();
+
+    renderProfile();
+
+    renderStories();
+
+    toast("Profile picture changed!");
+
+}
+
+function resetGame(){
+
+    if(!confirm("Reset all Vybe progress?"))
+        return;
+
+    localStorage.removeItem("vybeGame");
+
+    location.reload();
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function navigate(page){
+
+    /*
+       Don't leave the comment sheet or story viewer
+       sitting over another page.
+    */
+
+    closeComments();
+
+    closeStoryViewer();
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(
+            screen=>{
+                screen.classList.remove("active");
+            }
+        );
+
+    const target=
+        document.getElementById(page);
+
+    if(!target)return;
+
+    target.classList.add("active");
+
+    document
+        .querySelectorAll(".nav-btn")
+        .forEach(
+            btn=>{
+                btn.classList.remove("active");
+            }
+        );
+
+    const nav=
+        document.getElementById(
+            "nav-"+page
+        );
+
+    if(nav)
+        nav.classList.add("active");
+
+    if(page==="profile")
+        renderProfile();
+
+    if(page==="inbox")
+        renderNotifications();
+
+    if(page==="create")
+        renderEmojiChoices();
+
+    playSound("tap");
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function toast(message){
+
+    const container=
+        document.getElementById(
+            "toastContainer"
+        );
+
+    const el=
+        document.createElement("div");
+
+    el.className="toast";
+
+    el.textContent=message;
+
+    container.appendChild(el);
+
+    setTimeout(
+        ()=>el.remove(),
+        2800
+    );
+
+}
+
+
+/* =========================================================
+   SOUND
+========================================================= */
+
+let audioContext=null;
+
+function getAudio(){
+
+    if(!audioContext){
+
+        audioContext=
+            new(
+                window.AudioContext||
+                window.webkitAudioContext
+            )();
+
+    }
+
+    return audioContext;
+
+}
+
+function playSound(type){
+
+    try{
+
+        const ctx=getAudio();
+
+        if(ctx.state==="suspended")
+            ctx.resume();
+
+        const osc=ctx.createOscillator();
+
+        const gain=ctx.createGain();
+
+        osc.connect(gain);
+
+        gain.connect(ctx.destination);
+
+        let frequency=440;
+        let duration=.08;
+
+        if(type==="like"){
+            frequency=700;
+            duration=.08;
+        }
+
+        if(type==="follow"){
+            frequency=520;
+            duration=.12;
+        }
+
+        if(type==="comment"){
+            frequency=430;
+            duration=.1;
+        }
+
+        if(type==="post"){
+            frequency=600;
+            duration=.12;
+        }
+
+        if(type==="level"){
+            frequency=880;
+            duration=.3;
+        }
+
+        if(type==="tap"){
+            frequency=250;
+            duration=.035;
+        }
+
+        osc.frequency.value=frequency;
+
+        gain.gain.setValueAtTime(
+            .06,
+            ctx.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .001,
+            ctx.currentTime+duration
+        );
+
+        osc.start();
+
+        osc.stop(
+            ctx.currentTime+duration
+        );
+
+    }catch(e){}
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+calculateOffline();
+
+document.documentElement.style.setProperty(
+    "--bg",
+    game.background||"#09090d"
+);
+
+renderStories();
+
+renderFeed();
+
+renderProfile();
+
+renderNotifications();
+
+renderEmojiChoices();
+
+
+/* =========================================================
+   INFINITE FEED
+========================================================= */
+
+document
+    .getElementById("feed")
+    .addEventListener(
+        "scroll",
+        ()=>{
+
+            const feed=
+                document.getElementById("feed");
+
+            if(
+                feed.scrollTop+
+                feed.clientHeight>=
+                feed.scrollHeight-1000
+            ){
+
+                const current=
+                    feed.children.length;
+
+                generatedPosts
+                    .slice(
+                        current,
+                        current+30
+                    )
+                    .forEach(
+                        post=>{
+                            feed.appendChild(
+                                createPostElement(post)
+                            );
+                        }
+                    );
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   ESCAPE KEY
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    e=>{
+
+        if(e.key==="Escape"){
+
+            closeComments();
+
+            closeStoryViewer();
+
+            document
+                .querySelectorAll(".modal")
+                .forEach(
+                    m=>{
+                        m.classList.remove("open");
+                    }
+                );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   MODAL OUTSIDE CLICK
+========================================================= */
+
+document
+    .querySelectorAll(".modal")
+    .forEach(
+        modal=>{
+
+            modal.addEventListener(
+                "click",
+                e=>{
+
+                    if(e.target===modal){
+
+                        modal.classList.remove(
+                            "open"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   PREVENT PAGE SCROLL
+========================================================= */
+
+document.body.addEventListener(
+    "touchmove",
+    e=>{
+
+        if(
+            !e.target.closest(".feed")&&
+            !e.target.closest(".page")&&
+            !e.target.closest(".comments-list")&&
+            !e.target.closest(".stories")
+        ){
+
+            e.preventDefault();
+
+        }
+
+    },
+    {passive:false}
+);
+
+
+/* =========================================================
+   AUTOSAVE
+========================================================= */
+
+setInterval(
+    ()=>save(),
+    10000
+);
+
+
+/* =========================================================
+   PASSIVE GROWTH
+========================================================= */
+
+setInterval(
+    ()=>{
+
+        if(game.level>=2){
+
+            const growth=
+                Math.max(
+                    1,
+                    Math.floor(game.level/2)
+                );
+
+            game.followers+=growth;
+
+            game.likes+=
+                growth*randomInt(2,6);
+
+            if(Math.random()<.25){
+
+                game.notifications.unshift({
+
+                    text:
+                        "Your post got new engagement! +"+
+                        growth+
+                        " followers",
+
+                    time:Date.now()
+
+                });
+
+            }
+
+            save();
+
+        }
+
+    },
+    30000
+);
+
+</script>
+
+</body>
+</html>
